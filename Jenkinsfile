@@ -1,6 +1,9 @@
 pipeline {
     agent {
-        label 'dind'
+        docker {
+            image 'node:18'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
     stages {
         stage('Checkout') {
