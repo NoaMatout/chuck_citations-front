@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'dind' // ton agent Docker-in-Docker avec accès à Docker
+        label 'dind'
     }
 
     stages {
@@ -13,14 +13,11 @@ pipeline {
 
         stage('Test') {
             steps {
-                script {
-                    docker.image('node:18').inside {
-                        sh '''
-                        npm install
-                        npm run test
-                        '''
-                    }
-                }
+                sh '''
+                apk add --no-cache nodejs npm
+                npm install
+                npm run test
+                '''
             }
         }
 
