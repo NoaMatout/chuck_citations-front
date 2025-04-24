@@ -3,6 +3,13 @@ pipeline {
         label 'dind'
     }
 
+    environment {
+        DEPLOY_USER = 'vagrant'
+        DEPLOY_HOST = '192.168.56.152'
+        DEPLOY_PATH = '/var/www/html'
+        CREDENTIALS_ID = 'ssh-prod-key'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -11,22 +18,24 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Build frontend') {
             steps {
                 sh '''
                 apk add --no-cache nodejs npm
                 npm install
-                npm run test
+                npm run build
                 '''
             }
         }
 
-        stage('Build and push image') {
+        stage('Deploy to production') {
             steps {
-                sh '''
-                docker build -t registry.home.arpa:5000/chuck_front:latest -f docker/build/Dockerfile .
-                docker push registry.home.arpa:5000/chuck_front:latest
-                '''
+                sshagent (credentials: [env.CREDENTIALS_ID]) {
+                    sh '''
+                    echo "🔄 Déploiement des fichiers dist/ vers ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
+                    scp -r dist/* ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
+                    '''
+                }
             }
         }
     }
