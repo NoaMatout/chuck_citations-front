@@ -32,6 +32,8 @@ pipeline {
             steps {
                 sshagent (credentials: [env.CREDENTIALS_ID]) {
                     sh '''
+                    echo "📦 Création du dossier /var/www/html sur le serveur prod"
+                    ssh vagrant@192.168.56.152 'sudo mkdir -p /var/www/html && sudo chown -R vagrant:vagrant /var/www/html'
                     echo "🔄 Déploiement des fichiers dist/ vers ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
                     scp -r dist/* ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}
                     '''
