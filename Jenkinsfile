@@ -24,7 +24,7 @@ pipeline {
         stage('Build and push image') {
             steps {
                 sh '''
-                docker build -t registry.home.arpa:5000/chuck_front:latest .
+                docker build -t registry.home.arpa:5000/chuck_front:latest -f docker/build/Dockerfile .
                 docker push registry.home.arpa:5000/chuck_front:latest
                 '''
             }
