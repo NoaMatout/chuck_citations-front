@@ -7,7 +7,7 @@ pipeline {
         DEPLOY_USER = 'vagrant'
         DEPLOY_HOST = '192.168.56.152'
         DEPLOY_PATH = '/var/www/html'
-        CREDENTIALS_ID = 'ssh-prod-key'
+        CREDENTIALS_ID = 'ssh-dind-prod'
     }
 
     stages {
