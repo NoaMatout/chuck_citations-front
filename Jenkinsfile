@@ -1,10 +1,8 @@
 pipeline {
     agent {
-        docker {
-            image 'node:18'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
+        label 'dind' // ton agent Docker-in-Docker avec accès à Docker
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -15,10 +13,14 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh '''
-                npm install
-                npm run test
-                '''
+                script {
+                    docker.image('node:18').inside {
+                        sh '''
+                        npm install
+                        npm run test
+                        '''
+                    }
+                }
             }
         }
 
